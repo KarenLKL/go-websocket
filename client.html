@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>websocket client</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var wsUrl="ws://127.0.0.1:8888/ws"
+        var output,websocket
+        window.addEventListener("load",init,false)
+
+        function init(){
+            output=document.getElementById("messageBox")
+            testWebsocket()
+
+        }
+        function testWebsocket(){
+            websocket=new WebSocket(wsUrl)
+            websocket.onopen=function(evt){
+                wsOnOpen(evt)
+            }
+            websocket.onclose = function(evt) { 
+	            onClose(evt) 
+	        }; 
+	        websocket.onmessage = function(evt) { 
+	            onMessage(evt) 
+	        }; 
+	        websocket.onerror = function(evt) { 
+	            onError(evt) 
+	        }; 
+
+        }
+
+        function wsOnOpen(evt){
+            writeToScreen('CONNECTD...')
+        }
+
+        function onClose(evt) { 
+	        writeToScreen("DISCONNECTED"); 
+	    }  
+	 
+	    function onMessage(evt) { 
+	        writeToScreen('<span style="color: blue;">RESPONSE: '+ evt.data+'</span>'); 
+	       // websocket.close(); 
+	    }  
+	 
+	    function onError(evt) { 
+	        writeToScreen('<span style="color: red;">ERROR:</span> '+ evt.data); 
+	    }  
+	 
+	    function doSend(message) { 
+	        writeToScreen("SENT: " + message);  
+	        websocket.send(message); 
+	    }  
+
+
+        /**
+         * 写消息到屏幕
+         */
+        function writeToScreen(message){
+            var pre=document.createElement("p")
+            pre.style.wordWrap = "break-word"; 
+	        pre.innerHTML = message; 
+	        output.appendChild(pre);
+        }
+
+        function sendMessage(){
+            var message=document.getElementById("inputId").value
+            doSend(message)
+            document.getElementById("inputId").value = ''
+        }
+
+        function closeConnection(){
+            writeToScreen("close connection...")
+            websocket.close()
+        }
+
+    </script>
+
+
+
+    <p>websocket test</p>
+    <br><br><br>
+
+    <div style="width:100%;height:500px">
+        <div style="width:50%;float: left;height: 100%;">
+            <input type="text" id="inputId">
+            <button onclick="sendMessage()">发送</button>
+            <button onclick="closeConnection()">关闭</button>
+        </div>
+        <div style="width:50%;float: left;height: 100%;" id="messageBox"></div>
+    </div>
+</body>
+
+</html>
